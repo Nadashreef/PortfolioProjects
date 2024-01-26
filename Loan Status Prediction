@@ -1,0 +1,49 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+
+
+
+loan_data = pd.read_csv('/content/loan_dataset.csv')
+
+loan_data.head()
+
+loan_data.isnull().sum()
+
+loan_data = loan_data.dropna()
+
+loan_data.isnull().sum()
+
+loan_data.value_counts().sum()
+
+loan_data = loan_data.replace(to_replace='3+', value=4)
+
+
+loan_data.replace({'Loan_Status' : {'N':0,'Y':1}, 'Married':{'No':0,'Yes':1},'Gender':{'Male':1,'Female':0},'Self_Employed':{'No':0,'Yes':1},
+                      'Property_Area':{'Rural':0,'Semiurban':1,'Urban':2},'Education':{'Graduate':1,'Not Graduate':0}},inplace=True)
+
+loan_data.head()
+
+X = loan_data.drop(columns=['Loan_Status','Loan_ID'],axis=1)
+Y = loan_data['Loan_Status']
+
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y,test_size=.1,random_state = 2)
+
+models = [LogisticRegression(max_iter=1000), SVC(kernel='linear'), KNeighborsClassifier(), RandomForestClassifier()]
+
+
+def compare_models_train_test():
+  for model in models :
+    model.fit(X_train,Y_train)
+
+    test_prediction = model.predict(X_test)
+    model_accuracy = accuracy_score(Y_test ,test_prediction)
+    print('accuracy of ',model,'=',model_accuracy)
+
+compare_models_train_test()
