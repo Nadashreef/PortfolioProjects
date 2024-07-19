@@ -1,1 +1,234 @@
+'''
+**Crude Death Rate :**
+1- I took the population of USA and Uganda in 2019 by filtering the population file by Time, Age group, total population and Location
+2- summed up the total population of each 5 years intervals in each country separately
+3- calculated total deaths of each age group in each country by multiplying death rate of specific age group with the total population of the same age group and divide it by 100000
+4- summed up the total deaths of all ages in each country separately and divided it by sum of total population of all ages in this country and multiplied by 100000 and rounded to 1 decimal number to get **Crude Death Rate** and did that to both countries
+
+**Age Standardized Death Rate :**
+1- I uploaded WHO Standard Population — Table 1 pdf and used the column WHO world standard*
+2- multiplied each death rate of a country specific age group with it's corresponding WHO world standard of the same age group
+3- summed all the results of each country separately and rounded it by 1 decimal number to get the age standardized death rate of each country
+
+**Assumptions :**
+1- The population data used in the calculations are accurate and reliable and the sum of total population of each age are accurate
+2- Death rates of COPD of each age are accurate
+
+**Analysis Outcome :**
+ The crude death rate of USA (57.6/100000) higher than Uganda (.7/100000) but the age standardized death rate in USA (28.4/100000) approximately the same as in Uganda (28.7/100000)
+ This mean that crude death rate is higher in US only due to the increase of old aged and their death rates are higher but actually the risk of COPD in both countries are approximately the same because age_standardized_death_rate the same
+'''
+
+
+#import dependencies
+import pandas as pd
+
+
+#read Population Estimates 1950-2021 file with Pandas
+Population = pd.read_csv('/content/WPP2022_PopulationExposureBySingleAgeSex_Medium_1950-2021.csv')
+Population.head()
+
+# Filter the DataFrame for the United States of America and year 2019
+population_usa = Population[(Population['Location'] == 'United States of America')  & (Population['Time'] == 2019)]
+
+# Select Total Population, AgeGrp, Time and Location columns from population_usa
+selected_columns_usa = population_usa[['Location','Time', 'AgeGrp','PopTotal']]
+
+
+
+
+# Filter the DataFrame for Uganda and year 2019
+population_uganda = Population[(Population['Location'] == 'Uganda')  & (Population['Time'] == 2019)]
+
+# Select Total Population, AgeGrp, Time and Location columns from population_uganda
+selected_columns_uganda = population_uganda[['Location','Time', 'AgeGrp','PopTotal']]
+
+
+
+
+selected_columns_uganda.head()
+
+selected_columns_usa.head()
+
+# Renaming column 'AgeGrp' to 'Age group' so we can merge it later
+selected_columns_usa.rename(columns={'AgeGrp': 'Age group'},inplace=True)
+selected_columns_uganda.rename(columns={'AgeGrp': 'Age group'},inplace=True)
+
+
+
+# replace each 5 years in USA with age group and used Chatgpt to write the code and save time
+selected_columns_usa['Age group'].replace(['0','1','2','3','4'], '0-4', inplace=True)
+selected_columns_usa['Age group'].replace(['5','6','7','8','9'], '5-9', inplace=True)
+selected_columns_usa['Age group'].replace(['10','11','12','13','14'], '10-14', inplace=True)
+selected_columns_usa['Age group'].replace(['15','16','17','18','19'], '15-19', inplace=True)
+selected_columns_usa['Age group'].replace(['20','21','22','23','24'], '20-24', inplace=True)
+selected_columns_usa['Age group'].replace(['25','26','27','28','29'], '25-29', inplace=True)
+selected_columns_usa['Age group'].replace(['30','31','32','33','34'], '30-34', inplace=True)
+selected_columns_usa['Age group'].replace(['35','36','37','38','39'], '35-39', inplace=True)
+selected_columns_usa['Age group'].replace(['40','41','42','43','44'], '40-44', inplace=True)
+selected_columns_usa['Age group'].replace(['45','46','47','48','49'], '45-49', inplace=True)
+selected_columns_usa['Age group'].replace(['50','51','52','53','54'], '50-54', inplace=True)
+selected_columns_usa['Age group'].replace(['55','56','57','58','59'], '55-59', inplace=True)
+selected_columns_usa['Age group'].replace(['60','61','62','63','64'], '60-64', inplace=True)
+selected_columns_usa['Age group'].replace(['65','66','67','68','69'], '65-69', inplace=True)
+selected_columns_usa['Age group'].replace(['70','71','72','73','74'], '70-74', inplace=True)
+selected_columns_usa['Age group'].replace(['75','76','77','78','79'], '75-79', inplace=True)
+selected_columns_usa['Age group'].replace(['80','81','82','83','84'], '80-84', inplace=True)
+selected_columns_usa['Age group'].replace(['85','86','87','88','89','90','91','92','93','94','95','96','97','98','99','100+'], '85+', inplace=True)
+
+
+
+
+selected_columns_usa.head()
+
+# replace each 5 years in Uganda with age group and used Chatgpt to write the code and save time
+selected_columns_uganda['Age group'].replace(['0','1','2','3','4'], '0-4', inplace=True)
+selected_columns_uganda['Age group'].replace(['5','6','7','8','9'], '5-9', inplace=True)
+selected_columns_uganda['Age group'].replace(['10','11','12','13','14'], '10-14', inplace=True)
+selected_columns_uganda['Age group'].replace(['15','16','17','18','19'], '15-19', inplace=True)
+selected_columns_uganda['Age group'].replace(['20','21','22','23','24'], '20-24', inplace=True)
+selected_columns_uganda['Age group'].replace(['25','26','27','28','29'], '25-29', inplace=True)
+selected_columns_uganda['Age group'].replace(['30','31','32','33','34'], '30-34', inplace=True)
+selected_columns_uganda['Age group'].replace(['35','36','37','38','39'], '35-39', inplace=True)
+selected_columns_uganda['Age group'].replace(['40','41','42','43','44'], '40-44', inplace=True)
+selected_columns_uganda['Age group'].replace(['45','46','47','48','49'], '45-49', inplace=True)
+selected_columns_uganda['Age group'].replace(['50','51','52','53','54'], '50-54', inplace=True)
+selected_columns_uganda['Age group'].replace(['55','56','57','58','59'], '55-59', inplace=True)
+selected_columns_uganda['Age group'].replace(['60','61','62','63','64'], '60-64', inplace=True)
+selected_columns_uganda['Age group'].replace(['65','66','67','68','69'], '65-69', inplace=True)
+selected_columns_uganda['Age group'].replace(['70','71','72','73','74'], '70-74', inplace=True)
+selected_columns_uganda['Age group'].replace(['75','76','77','78','79'], '75-79', inplace=True)
+selected_columns_uganda['Age group'].replace(['80','81','82','83','84'], '80-84', inplace=True)
+selected_columns_uganda['Age group'].replace(['85','86','87','88','89','90','91','92','93','94','95','96','97','98','99','100+'], '85+', inplace=True)
+
+
+
+selected_columns_usa = selected_columns_usa.groupby(['Location', 'Time', 'Age group'])['PopTotal'].sum().reset_index()
+
+
+selected_columns_usa.head()
+
+selected_columns_uganda = selected_columns_uganda.groupby(['Location', 'Time', 'Age group'])['PopTotal'].sum().reset_index()
+
+selected_columns_uganda.head()
+
+# Save the DataFrame to a CSV file
+selected_columns_usa.to_csv('usa_population_age_2019.csv', index=False)
+# Save the DataFrame to a CSV file
+selected_columns_uganda.to_csv('uganda_population_age_2019.csv', index=False)
+
+#Reading the death rates of COPD of Uganda and USA
+age_specific_death_rates_COPD = pd.read_csv('/content/age specific death rates of COPD (1).csv')
+
+# Renaming column 'Age group (years)' to 'Age group' so we can merge it later
+age_specific_death_rates_COPD.rename(columns={'Age group (years)': 'Age group'},inplace=True)
+
+selected_columns_uganda.head()
+
+# Merge the DataFrames based on the specific age column
+merged_population_usa = pd.merge(age_specific_death_rates_COPD, selected_columns_usa, on='Age group')
+
+# Drop the 'Death rate, Uganda, 2019' column
+merged_population_usa.drop(columns=['Death rate, Uganda, 2019'], inplace=True)
+
+# Perform the division operation between the "Total Population" columns
+merged_population_usa['Age Specific Total Deaths'] = ((merged_population_usa['Death rate, United States, 2019']/100000) * (merged_population_usa['PopTotal']))
+
+sum_of_age_specific_total_deaths_usa = merged_population_usa['Age Specific Total Deaths'].sum()
+sum_of_age_specific_total_population_usa = merged_population_usa['PopTotal'].sum()
+
+
+print(merged_population_usa['Death rate, United States, 2019'].dtype)
+
+merged_population_usa.head()
+
+# Merge the DataFrames based on the specific age column
+merged_population_uganda = pd.merge(age_specific_death_rates_COPD, selected_columns_uganda, on='Age group')
+
+# Drop the 'Death rate, Uganda, 2019' column
+merged_population_uganda.drop(columns=['Death rate, United States, 2019'], inplace=True)
+
+# Perform the division operation between the "Total Population" columns
+merged_population_uganda['Age Specific Total Deaths'] = ((merged_population_uganda['Death rate, Uganda, 2019'])/100000) *(merged_population_uganda['PopTotal'])
+
+sum_of_age_specific_total_deaths_uganda = merged_population_uganda['Age Specific Total Deaths'].sum()
+sum_of_age_specific_total_population_uganda = merged_population_usa['PopTotal'].sum()
+
+Crude_Death_Rate_usa = round((sum_of_age_specific_total_deaths_usa/ sum_of_age_specific_total_population_usa)*100000,1)
+Crude_Death_Rate_uganda = round((sum_of_age_specific_total_deaths_uganda/ sum_of_age_specific_total_population_uganda)*100000,1)
+
+
+print(Crude_Death_Rate_usa)
+print(Crude_Death_Rate_uganda)
+
+
+!pip install pdfplumber
+
+import pdfplumber
+
+# Read the WHO Standard Population — Table 1 in 'Ahmad OB, Boschi-Pinto C, Lopez AD, Murray CJ, Lozano R, Inoue M (2001). Age standardization of rates: a new WHO standard.' file
+
+# Open the PDF file
+with pdfplumber.open('/content/gpe_discussion_paper_series_paper31_2001_age_standardization_rates.pdf') as pdf:
+    # Access page 10
+    page = pdf.pages[9]  # Page numbering starts from 0
+
+    # Extract tables from the page
+    tables = page.extract_tables()
+
+    # Check if tables were found
+    if tables:
+        # Extract the first table
+        first_table = tables[0]
+
+        # Convert the table to a DataFrame
+
+        WHO_standard_population = pd.DataFrame(first_table[1:], columns=first_table[1])
+        print("Successfully extracted the table:")
+        print(WHO_standard_population)
+    else:
+        print("No tables found on page 10.")
+
+WHO_standard_population = WHO_standard_population.iloc[0:]
+
+WHO_standard_population.head()
+
+
+print(age_specific_death_rates_COPD.dtypes)
+
+WHO_standard_population['WHO World Standard*']
+
+# Merge the DataFrames based on the specific age column
+merged_With_WHO_Standard_Population = pd.merge(WHO_standard_population, age_specific_death_rates_COPD, on='Age group')
+
+# Drop the 'Death rate, Uganda, 2019' column
+merged_With_WHO_Standard_Population.drop(columns=['Segi (“world”) standard','Scandinavian (“European”) standard'], inplace=True)
+
+merged_With_WHO_Standard_Population['Death rate, United States, 2019'] = pd.to_numeric(merged_With_WHO_Standard_Population['Death rate, United States, 2019'], errors='coerce')
+merged_With_WHO_Standard_Population['Death rate, Uganda, 2019'] = pd.to_numeric(merged_With_WHO_Standard_Population['Death rate, Uganda, 2019'], errors='coerce')
+merged_With_WHO_Standard_Population['WHO World Standard*'] = pd.to_numeric(merged_With_WHO_Standard_Population['WHO World Standard*'], errors='coerce')
+
+# Perform the division operation between the "Total Population" columns
+merged_With_WHO_Standard_Population['USA Age Standardized Death Rate'] = (merged_With_WHO_Standard_Population['Death rate, United States, 2019']) * ((merged_With_WHO_Standard_Population['WHO World Standard*']/100))
+
+merged_With_WHO_Standard_Population['Uganda Age Standardized Death Rate'] = (merged_With_WHO_Standard_Population['Death rate, Uganda, 2019'] * ((merged_With_WHO_Standard_Population['WHO World Standard*']/100)))
+
+
+merged_With_WHO_Standard_Population['Death rate, United States, 2019'] = pd.to_numeric(merged_With_WHO_Standard_Population['Death rate, United States, 2019'], errors='coerce')
+
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
+# View the full DataFrame
+print(merged_With_WHO_Standard_Population['Death rate, United States, 2019'])
+
+Age_Standardized_Death_Rates_All_Ages_USA = round((merged_With_WHO_Standard_Population['USA Age Standardized Death Rate'].sum()),1)
+
+Age_Standardized_Death_Rates_All_Ages_Uganda = round((merged_With_WHO_Standard_Population['Uganda Age Standardized Death Rate'].sum()),1)
+
+
+print('Crude Death Rate in USA : ',Crude_Death_Rate_usa,' per 100000')
+print('Crude Death Rate in Uganda : ',Crude_Death_Rate_uganda,' per 100000')
+print('Age Standardized Death Rates for COPD All Ages in USA : ',Age_Standardized_Death_Rates_All_Ages_USA,' per 100000')
+print('Age Standardized Death Rates for COPD All Ages in Uganda : ',Age_Standardized_Death_Rates_All_Ages_Uganda,' per 100000')
 
